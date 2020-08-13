@@ -1,9 +1,10 @@
+from builtins import object
 import re
 
 from pyhive import hive
 
 
-class Client:
+class Client(object):
 
     _conn = None
 

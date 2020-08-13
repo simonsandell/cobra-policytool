@@ -1,8 +1,11 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import object
 import copy
 
-import urlutil
-from policyutil import validate_policy, get_resource_type, extend_tag_policy_with_hdfs
-from template import apply_context
+from . import urlutil
+from .policyutil import validate_policy, get_resource_type, extend_tag_policy_with_hdfs
+from .template import apply_context
 from collections import namedtuple
 import click
 import sys
@@ -142,7 +145,7 @@ def _get_paths_for_database_resources(hive_client, hive_resources):
         databases = hive_resources["database"]["values"]
         tables = hive_resources["table"]["values"]
     except KeyError as e:
-        raise RangerSyncError("Resource lack information about database or table. " + e.message)
+        raise RangerSyncError("Resource lack information about database or table. " + str(e))
 
     paths = []
     for db in databases:
@@ -155,10 +158,10 @@ def _get_paths_for_database_resources(hive_client, hive_resources):
 
 def _convert_hive_resource_policy_to_hdfs_policy(policy_template, context, options):
     policy_template_hdfs = copy.deepcopy(policy_template)
-    if not options.has_key("hdfsService"):
+    if "hdfsService" not in options:
         raise RangerSyncError(
             "Option hdfsService must be set if expandHiveResourceToHdfs is true on a policy with database resource.")
-    if not context.has_key("hive_client"):
+    if "hive_client" not in context:
         raise RangerSyncError("Hive server must be configured when using expandHiveResourceToHdfs option.")
     else:
         hive_client = context["hive_client"]
@@ -183,7 +186,7 @@ def _tags_to_columns(columns):
     tag_columns = defaultdict(list)
     for column in columns:
         attribute = column['attribute']
-        column_tags = filter(None, column['tags'].split(","))
+        column_tags = [_f for _f in column['tags'].split(",") if _f]
         for column_tag in column_tags:
             tag_columns[column_tag].append(attribute)
     return tag_columns
@@ -192,7 +195,7 @@ def _tags_to_columns(columns):
 RuleIdentifier = namedtuple('RuleIdentifier', 'service,name')
 
 
-class RangerSync:
+class RangerSync(object):
     def __init__(self, ranger_client, verbose=0, dryrun=False):
         self.ranger_client = ranger_client
         self.verbose = verbose

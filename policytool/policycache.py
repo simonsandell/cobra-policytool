@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from builtins import str
+from builtins import object
 import csv
 import json
 import os
@@ -11,12 +14,12 @@ from collections import Counter
 
 from requests_kerberos import HTTPKerberosAuth
 
-import atlas
-import hive
-import tagsync
+from . import atlas
+from . import hive
+from . import tagsync
 
 
-class PolicyCache:
+class PolicyCache(object):
 
     def __init__(self, cache_json_dict):
         self.tags = cache_json_dict['tags']
@@ -33,7 +36,7 @@ class PolicyCache:
         expected_counter = Counter(expected_resource_elements)
         result = {}
         for res in policy_cache_dict['serviceResources']:
-            if Counter(res['resourceElements'].keys()) == expected_counter:
+            if Counter(list(res['resourceElements'].keys())) == expected_counter:
                 qualified_key = []
                 for k in expected_resource_elements:
                     qualified_key.append(res['resourceElements'][k]['values'][0])

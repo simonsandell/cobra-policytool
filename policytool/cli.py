@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+from __future__ import absolute_import
 import click
 from click import ClickException
 from requests_kerberos import HTTPKerberosAuth
-import atlas
-import hive
-import policycache
-import tagsync
-import ranger
-import rangersync
+from . import atlas
+from . import hive
+from . import policycache
+from . import tagsync
+from . import ranger
+from . import rangersync
 from policytool.configfile import JSONPropertiesFile
-from template import Context
+from .template import Context
 import os
 import os.path
 import json
@@ -69,7 +70,7 @@ def _tags_to_atlas(srcdir, environment, hdfs, retry, verbose, config, tabletagfi
             if verbose > 0:
                 tagsync.print_sync_worklog(log)
     except (tagsync.SyncError, IOError) as e:
-        raise ClickException(e.message + "\nTag sync not complete, fix errors and re-run.")
+        raise ClickException(str(e) + "\nTag sync not complete, fix errors and re-run.")
 
 
 @cli.command("tags_to_atlas", help="sync tags from source files to Atlas.")
@@ -116,7 +117,7 @@ def _rules_to_ranger_cmd(srcdir, project_name, environment, config, verbose, dry
         "table_columns": table_columns,
     }
 
-    if conf.has_key('hive_server'):
+    if 'hive_server' in conf:
         context_dict['hive_client'] = hive.Client(conf['hive_server'], conf['hive_port'])
 
     # Add variables from config to context_dict.
@@ -215,7 +216,7 @@ def _audit(srcdir, environment, config, tabletagfile, columntagfile):
                 print("Metadata missing following tags for column: %s tags: %s" % (d, ", ".join(only_atlas).decode("utf-8")))
 
     except IOError as e:
-        raise ClickException(e.message)
+        raise ClickException(str(e))
 
 
 @cli.command("audit_tags", help="A dry run providing audit information about tags. \

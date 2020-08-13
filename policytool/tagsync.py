@@ -1,8 +1,10 @@
 from __future__ import print_function
+from __future__ import absolute_import
+from builtins import object
 import csv
 import time
-from atlas import AtlasError
-from hive import HiveError
+from .atlas import AtlasError
+from .hive import HiveError
 
 
 def strip_qualified_name(qualified_name):
@@ -68,7 +70,7 @@ def diff_table_tags(src_data_tables, atlas_tables):
     for s in src_data_tables:
         expected_tags = set(s['tags'].split(','))-set([''])
         table_name = s['schema']+"."+s['table']
-        if atlas_tables.has_key(table_name):
+        if table_name in atlas_tables:
             atlas_table_tags = atlas_tables[table_name]['tags']
         else:
             atlas_table_tags = set()
@@ -88,7 +90,7 @@ def diff_column_tags(src_data_columns, atlas_columns):
     for col in src_data_columns:
         expected_tags = set(col['tags'].split(','))-set([''])
         column_name = col['schema']+"."+col['table']+"."+col['attribute']
-        if atlas_columns.has_key(column_name):
+        if column_name in atlas_columns:
             atlas_column_tags = atlas_columns[column_name]['tags']
         else:
             atlas_column_tags = set()
@@ -102,7 +104,7 @@ def _tags_as_set(csv_line):
     return set(csv_line['tags'].split(',')) - {''}
 
 
-class Sync:
+class Sync(object):
     """
     This class is not thread safe.
     """

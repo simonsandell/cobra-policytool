@@ -1,10 +1,11 @@
+from builtins import object
 import unittest
 from mock import MagicMock
 
 from policytool import hive
 
 
-class _CursorMock:
+class _CursorMock(object):
 
     def __init__(self, execute=lambda q: "", fetchall=lambda: []):
         self.execute_mock=execute

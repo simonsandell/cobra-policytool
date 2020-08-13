@@ -1,9 +1,11 @@
+from __future__ import absolute_import
+from builtins import object
 import requests
 
-import urlutil
+from . import urlutil
 
 
-class Client:
+class Client(object):
 
     def __init__(self, url_prefix, auth=None):
         """
@@ -85,7 +87,7 @@ class Client:
         response = self._search(query)
         if response.status_code == 200:
             json_response = response.json()
-            if json_response.has_key('entities'):
+            if 'entities' in json_response:
                 return self._filter_entities_on_qualifiedName(json_response['entities'], self._create_qualifiedName_prefix(*values))
             else:
                 return []
@@ -190,7 +192,7 @@ class Client:
         response = requests.get(self.url_prefix + "/entities/" + guid, auth=self.auth)
         if response.status_code == 200:
             json_response = response.json()
-            if json_response['definition'].has_key('traitNames'):
+            if 'traitNames' in json_response['definition']:
                 return set(json_response['definition']['traitNames'])
             else:
                 return set()
@@ -223,7 +225,7 @@ class Client:
         response = self._post_entity(entity)
         if response.status_code == 200:
             json_response = response.json()
-            if json_response.has_key('guidAssignments'):
+            if 'guidAssignments' in json_response:
                 return json_response['guidAssignments']['-1']
             else:
                 AtlasError("Failed to add hdfs path {} content mismatch {}".format(hdfs_path, response.content))

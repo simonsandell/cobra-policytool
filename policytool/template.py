@@ -1,3 +1,4 @@
+from builtins import object
 import re
 
 pattern = re.compile("\$\{(.*?)\}")
@@ -16,14 +17,14 @@ def apply_context(data, context):
     if isinstance(data, list):
         return [apply_context(value, context) for value in data]
     elif isinstance(data, dict):
-        return {key: apply_context(value, context) for key, value in data.items()}
-    elif isinstance(data, unicode):
+        return {key: apply_context(value, context) for key, value in list(data.items())}
+    elif isinstance(data, str):
         return pattern.sub(subst, data)
     else:
         return data
 
 
-class Context:
+class Context(object):
     def __init__(self, env_list=[]):
         if isinstance(env_list, dict):
             env_list = [env_list]
@@ -38,7 +39,7 @@ class Context:
 
     def has_key(self, key):
         for env in self.env_list:
-            value = env.has_key(key)
+            value = key in env
             if value:
                 return True
         return False

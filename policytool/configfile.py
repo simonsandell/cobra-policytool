@@ -1,3 +1,4 @@
+from builtins import object
 import json
 import os
 import platform
@@ -17,7 +18,7 @@ def _find_default_config():
             return user_config
 
 
-class JSONPropertiesFile:
+class JSONPropertiesFile(object):
 
     def __init__(self, config_file_path, default_config={}):
         if config_file_path is None:

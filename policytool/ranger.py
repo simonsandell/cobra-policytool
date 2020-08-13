@@ -1,6 +1,7 @@
+from builtins import object
 import requests
 
-class Client:
+class Client(object):
 
     def __init__(self, url_prefix, auth=None):
         """
