@@ -262,7 +262,7 @@ class TestResourceType(unittest.TestCase):
             self.fail("get_resource_type did not raise exception for missing policyItems.")
         self.assertEqual(
             "PolicyType must be 0 to support option expandHiveResourceToHdfs. Policy: foo",
-            str(e.exception))
+            e.exception.args[0])
 
 
 class TestExtendTagPolicyWithHdfs(unittest.TestCase):
